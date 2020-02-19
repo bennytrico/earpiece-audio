@@ -10,4 +10,12 @@ class EarpieceAudio {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
+
+  static Future<String> setSpeakerEarpiece(bool mode) async {
+    Map<String, dynamic> payload = {
+      'mode': mode
+    };
+
+    return await _channel.invokeMethod("setSpeakerEarpiece", payload);
+  }
 }

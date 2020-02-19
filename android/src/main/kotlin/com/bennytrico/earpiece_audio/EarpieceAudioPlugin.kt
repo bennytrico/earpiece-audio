@@ -1,5 +1,7 @@
 package com.bennytrico.earpiece_audio
 
+import android.content.Context
+import android.media.AudioManager
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -13,6 +15,8 @@ public class EarpieceAudioPlugin: FlutterPlugin, MethodCallHandler {
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     val channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "earpiece_audio")
     channel.setMethodCallHandler(EarpieceAudioPlugin());
+
+    context = flutterPluginBinding.applicationContext
   }
 
   // This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -25,6 +29,8 @@ public class EarpieceAudioPlugin: FlutterPlugin, MethodCallHandler {
   // depending on the user's project. onAttachedToEngine or registerWith must both be defined
   // in the same class.
   companion object {
+    lateinit var context: Context
+
     @JvmStatic
     fun registerWith(registrar: Registrar) {
       val channel = MethodChannel(registrar.messenger(), "earpiece_audio")
@@ -33,10 +39,23 @@ public class EarpieceAudioPlugin: FlutterPlugin, MethodCallHandler {
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
+
+    when (call.method) {
+      "getPlatformVersion" -> {
+        result.success("Android ${android.os.Build.VERSION.RELEASE}")
+      }
+      "setSpeakerEarpiece" -> {
+        var audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+
+        audioManager.isSpeakerphoneOn = false
+
+        result.success("BERHASIL BERHASIL HORE")
+      }
+      else -> {
+        result.notImplemented()
+      }
     }
   }
 
