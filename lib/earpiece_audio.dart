@@ -49,9 +49,9 @@ class EarpieceAudio {
     isLocal ??= file.path.startsWith("/") ||
         file.path.startsWith("file://") ||
         file.path.substring(1).startsWith(':\\');
-
+    print("Filename $filename");
     Map<String, dynamic> body = {
-      'url': file.path
+      'filename': filename // ini sebelumnya file.path. ini aku ganti jadi filename. karena path-nya udah kebaca dari swiftnya
     };
     return await _channel.invokeMethod('play', body);
   }

@@ -27,15 +27,16 @@ public class SwiftEarpieceAudioPlugin: NSObject, FlutterPlugin {
         break
     
     case "play":
-//        if let args = call.arguments as? Dictionary<String, Any>,
-//            let url = args["url"] as? String {
-            let url = call.arguments as? Dictionary<String, Any>
-            guard let path: String = Bundle.main.path(forResource: url?["url"] as! String, ofType: "mp4") else {
-                return result("error");
-            }
-            
-            let finalUrl: URL = URL(fileURLWithPath: path)
-//
+        let arguments: [String: Any] = call.arguments as? [String: Any] ?? [:]
+        let filename: String = arguments["filename"] as? String ?? ""
+            print("url from flutter \(arguments)")
+            print("url path from flutter \(filename)")
+
+            let finalUrl = try! FileManager.default
+                .url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                .appendingPathComponent(filename)
+        
+            print("final url path \(finalUrl)")
             do {
 
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playAndRecord)
@@ -49,12 +50,8 @@ public class SwiftEarpieceAudioPlugin: NSObject, FlutterPlugin {
             } catch {
                 result("Error play sound")
             }
-            
-//        }
-        
-        
-        
-        result(url?["url"])
+
+        result(filename)
     default:
         break
     }
