@@ -16,16 +16,6 @@ public class SwiftEarpieceAudioPlugin: NSObject, FlutterPlugin {
     case "getPlatformVersion":
         result("iOS " + UIDevice.current.systemVersion)
         break
-    case "setSpeakerEarpiece":
-        do {
-            
-        } catch {
-            result("error \(error)")
-        }
-                
-        result("BERHASIL")
-        break
-    
     case "play":
         let arguments: [String: Any] = call.arguments as? [String: Any] ?? [:]
         let filename: String = arguments["filename"] as? String ?? ""
@@ -37,6 +27,8 @@ public class SwiftEarpieceAudioPlugin: NSObject, FlutterPlugin {
                 .appendingPathComponent(filename)
         
             print("final url path \(finalUrl)")
+            
+
             do {
 
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playAndRecord)
@@ -44,6 +36,7 @@ public class SwiftEarpieceAudioPlugin: NSObject, FlutterPlugin {
 
                 SwiftEarpieceAudioPlugin.audioPlayer = try AVAudioPlayer(contentsOf: finalUrl)
                 SwiftEarpieceAudioPlugin.audioPlayer.prepareToPlay()
+                SwiftEarpieceAudioPlugin.audioPlayer.numberOfLoops = -1
                 SwiftEarpieceAudioPlugin.audioPlayer.play()
 
                 result("Berhasil play")
@@ -52,6 +45,11 @@ public class SwiftEarpieceAudioPlugin: NSObject, FlutterPlugin {
             }
 
         result(filename)
+        break
+    case "stop":
+        SwiftEarpieceAudioPlugin.audioPlayer.stop()
+        result("audio stop")
+        break
     default:
         break
     }

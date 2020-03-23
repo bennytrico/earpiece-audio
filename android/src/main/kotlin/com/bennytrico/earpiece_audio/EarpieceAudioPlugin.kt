@@ -2,6 +2,7 @@ package com.bennytrico.earpiece_audio
 
 import android.content.Context
 import android.media.AudioManager
+import android.util.Log
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -45,13 +46,23 @@ public class EarpieceAudioPlugin: FlutterPlugin, MethodCallHandler {
         result.success("Android ${android.os.Build.VERSION.RELEASE}")
       }
       "setSpeakerEarpiece" -> {
+        val mode: Boolean = call.argument<Boolean>("mode")!!
+
         var audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+        if (!mode) {
+          audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
-        audioManager.isSpeakerphoneOn = false
+          audioManager.isSpeakerphoneOn = mode
 
-        result.success("BERHASIL BERHASIL HORE")
+          result.success("Audio in Earpiece Mode")
+        } else if (mode) {
+          audioManager.mode = AudioManager.MODE_NORMAL
+
+          audioManager.isSpeakerphoneOn = mode
+
+          result.success("Audio in Normal Mode")
+        }
       }
       else -> {
         result.notImplemented()

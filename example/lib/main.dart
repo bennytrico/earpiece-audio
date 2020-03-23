@@ -33,7 +33,25 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Column(
+            children: <Widget>[
+              Text('Running on: $_platformVersion\n'),
+              RaisedButton(
+                onPressed: () async {
+                  final responsePath = await _earpiece.stop();
+                  print(responsePath);
+                },
+                child: Text("Matin audio"),
+              ),
+              RaisedButton(
+                onPressed: () async {
+                  final responsePath = await _earpiece.play("audios/phone_calling.mp4");
+                  print(responsePath);
+                },
+                child: Text("Nyalain audio"),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -1,8 +1,9 @@
 <component name="libraryTable">
-  <library name="Flutter Plugins" type="FlutterPluginsLibraryType">
+  <library name="Flutter Plugins">
     <CLASSES>
       <root url="file://$PROJECT_DIR$" />
-      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.1" />
+      <root url="file://$USER_HOME$/Android/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.1" />
+      <root url="file://$USER_HOME$/Android/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers-0.14.1" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

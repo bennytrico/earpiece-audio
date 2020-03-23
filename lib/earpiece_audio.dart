@@ -1,7 +1,9 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:io' show File, Platform;
 import 'dart:typed_data';
 
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -10,13 +12,15 @@ class EarpieceAudio {
       const MethodChannel('earpiece_audio');
 
   Map<String, File> loadedFiles = {};
+  static AudioCache _audioCache = AudioCache();
+  static AudioPlayer _audioPlayer;
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
 
-  static Future<String> setSpeakerEarpiece(bool mode) async {
+  Future<String> _setSpeakerEarpiece(bool mode) async {
     Map<String, dynamic> payload = {
       'mode': mode
     };
@@ -44,15 +48,50 @@ class EarpieceAudio {
   }
 
   Future<String> play(String filename, {bool isLocal}) async {
-    File file = await load(filename);
+    if (Platform.isAndroid) {
+      return await _playAndroidDevice(filename);
+    } else if (Platform.isIOS) {
+      return await _playIosDevice(filename);
+    }
 
-    isLocal ??= file.path.startsWith("/") ||
-        file.path.startsWith("file://") ||
-        file.path.substring(1).startsWith(':\\');
-    print("Filename $filename");
+    return 'device_unknown';
+  }
+
+  Future<String> stop() async {
+    if (Platform.isAndroid) {
+      return await _stopAndroidDevice();
+    } else if (Platform.isIOS) {
+      return await _stopIosDevice();
+    }
+
+    return "stop";
+  }
+
+  Future<String> _playIosDevice(String filename) async {
     Map<String, dynamic> body = {
-      'filename': filename // ini sebelumnya file.path. ini aku ganti jadi filename. karena path-nya udah kebaca dari swiftnya
+      'filename': filename
     };
+
     return await _channel.invokeMethod('play', body);
+  }
+
+  Future<String> _playAndroidDevice(String filename) async {
+    await _setSpeakerEarpiece(false);
+
+    _audioPlayer = await _audioCache.loop(filename);
+
+    return 'success';
+  }
+
+  Future<String> _stopIosDevice() async {
+    return await _channel.invokeMethod("stop");
+  }
+
+  Future<String> _stopAndroidDevice() async {
+    _audioPlayer?.stop();
+
+    await _setSpeakerEarpiece(true);
+
+    return 'audio stop';
   }
 }
