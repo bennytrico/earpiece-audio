@@ -1,6 +1,6 @@
 name: earpiece_audio
 description: This flutter plugin provides an API for play audio from earpiece.
-version: 0.0.2
+version: 0.0.3
 author: Uncle Ben
 homepage: https://github.com/bennytrico/earpiece-audio
 
